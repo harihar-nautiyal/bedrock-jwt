@@ -24,7 +24,6 @@ fn decode_b64_standard(s: &str) -> Result<Vec<u8>, base64::DecodeError> {
     general_purpose::STANDARD.decode(s)
 }
 
-/// Build a p384 PublicKey from base64 (either SPKI DER or raw SEC1 / raw X||Y)
 fn build_public_key_from_b64(b64: &str) -> Result<PublicKey, Box<dyn std::error::Error>> {
     let bytes = decode_b64_standard(b64)?;
 
@@ -47,8 +46,6 @@ fn build_public_key_from_b64(b64: &str) -> Result<PublicKey, Box<dyn std::error:
     }
 }
 
-/// Convert JOSE ECDSA signature (r || s) -> ASN.1/DER encoded ECDSA signature.
-/// For P-384, r and s are each 48 bytes, so JOSE sig length is 96 bytes.
 fn jose_sig_to_der(jose_sig: &[u8]) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
     if jose_sig.len() % 2 != 0 {
         return Err("JOSE signature length is not even".into());
@@ -148,13 +145,11 @@ fn verify_x5u_chain() -> Result<(), Box<dyn std::error::Error>> {
     }
     let mut next_public_b64 = decode_header_get_x5u(first_parts[0])?;
 
-    // prepare mojang public key (PublicKey) for comparison on token 2
     let mojang_pk = build_public_key_from_b64(MOJANG_PUBLIC_KEY_B64)?;
 
     for (i, token) in tokens.iter().enumerate() {
         println!("\n--- Verifying Token {} ---", i + 1);
 
-        // Build public key (used to verify this token) from next_public_b64 (from previous step)
         let current_pub = match build_public_key_from_b64(&next_public_b64) {
             Ok(k) => k,
             Err(e) => {
@@ -163,7 +158,6 @@ fn verify_x5u_chain() -> Result<(), Box<dyn std::error::Error>> {
             }
         };
 
-        // On token 2, ensure current_pub equals mojang_pk
         if i == 1 {
             let cur_der = current_pub.to_public_key_der()?;
             let moj_der = mojang_pk.to_public_key_der()?;
@@ -175,7 +169,6 @@ fn verify_x5u_chain() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
 
-        // Split token -> header.payload.signature
         let parts: Vec<&str> = token.split('.').collect();
         if parts.len() != 3 {
             eprintln!("Token {} not in header.payload.signature format", i + 1);
@@ -194,9 +187,6 @@ fn verify_x5u_chain() -> Result<(), Box<dyn std::error::Error>> {
             .map_err(|e| format!("invalid DER signature for token {}: {}", i + 1, e))?;
 
         if let Err(_) = verifying_key.verify(signing_input_bytes, &signature) {
-            // optional fallback: try pre-hash verify (uncomment if needed)
-            // let digest = sha2::Sha384::digest(signing_input_bytes);
-            // if verifying_key.verify_digest(digest, &signature).is_err() { ... }
             eprintln!("Verification failed: signature invalid for token {}", i + 1);
             exit(1);
         } else {

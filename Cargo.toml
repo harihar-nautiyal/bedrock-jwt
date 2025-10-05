@@ -2,6 +2,12 @@
 name = "bedrock-jwt"
 version = "0.1.0"
 edition = "2024"
+authors = ["Harihar Nautiyal <hariharnautiyal@outlook.com>"]
+description = "Verify Minecraft Bedrock Edition jwt chains and extract player claims."
+license = "MIT"
+repository = "https://gihtub.com/harihar-nautiyal/bedrock-jwt"
+keywords = ["jwt", "mojang", "minecraft", "bedrock", "auth"]
+categories = ["authentication", "cryptography"]
 
 [dependencies]
 jsonwebtoken = { version = "10.0.0", features = ["rust_crypto"] }
@@ -12,3 +18,5 @@ sha2 = "0.10.9"
 p384 = { version = "0.13.1", features = ["ecdsa"] }
 ecdsa = "0.16.9"
 anyhow = "1.0.100"
+serde = { version = "1.0.228", features = ["derive"] }
+thiserror = "2.0.17"

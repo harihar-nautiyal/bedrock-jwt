@@ -42,8 +42,10 @@ dependencies = [
  "jsonwebtoken",
  "log",
  "p384",
+ "serde",
  "serde_json",
  "sha2",
+ "thiserror",
 ]
 
 [[package]]
