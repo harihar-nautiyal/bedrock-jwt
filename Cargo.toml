@@ -10,13 +10,9 @@ keywords = ["jwt", "mojang", "minecraft", "bedrock", "auth"]
 categories = ["authentication", "cryptography"]
 
 [dependencies]
-jsonwebtoken = { version = "10.0.0", features = ["rust_crypto"] }
 serde_json = "1.0.145"
 base64 = "0.22.1"
-log = "0.4.28"
-sha2 = "0.10.9"
 p384 = { version = "0.13.1", features = ["ecdsa"] }
 ecdsa = "0.16.9"
-anyhow = "1.0.100"
 serde = { version = "1.0.228", features = ["derive"] }
 thiserror = "2.0.17"
