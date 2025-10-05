@@ -17,8 +17,17 @@ fn main() {
 
     let token_slices: Vec<&str> = tokens.iter().map(|s| s.as_str()).collect();
 
-    if let Err(e) = bedrock_jwt::verifier::verify_chain(&token_slices, &mojang_key) {
-        eprintln!("FATAL ERROR: Verification failed. Details: {}", e);
-        std::process::exit(1);
+    match bedrock_jwt::verifier::verify_chain(&token_slices, &mojang_key) {
+        Ok(claims) => {
+            println!("\n--- Verified Player Data ---");
+            println!("  Display Name: {}", claims.display_name);
+            println!("  UUID:         {}", claims.uuid);
+            println!("  XUID:         {}", claims.xuid);
+            println!("-----------------------------");
+        }
+        Err(e) => {
+            eprintln!("\nFATAL ERROR: Verification failed. Details: {}", e);
+            std::process::exit(1);
+        }
     }
 }
