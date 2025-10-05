@@ -17,7 +17,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-bedrock-jwt = { git = "https://github.com/your-username/bedrock-jwt.git" }
+bedrock-jwt = { git = "https://github.com/harihar-nautiyal/bedrock-jwt.git" }
 ```
 
 The primary entry point for this library is the `verify_chain` function, which takes a slice
