@@ -33,18 +33,18 @@ pub enum AuthError {
     #[error("Invalid signature")]
     InvalidSignature,
     #[error("ECDSA signature error: {0}")]
-    Ecdsa(#[from] p384::ecdsa::Error),
+    Ecdsa(#[from] ecdsa::Error),
 }
 
-fn decode_b64_url_nopad(s: &str) -> Result<Vec<u8>, base64::DecodeError> {
+pub fn decode_b64_url_nopad(s: &str) -> Result<Vec<u8>, base64::DecodeError> {
     general_purpose::URL_SAFE_NO_PAD.decode(s)
 }
 
-fn decode_b64_standard(s: &str) -> Result<Vec<u8>, base64::DecodeError> {
+pub fn decode_b64_standard(s: &str) -> Result<Vec<u8>, base64::DecodeError> {
     general_purpose::STANDARD.decode(s)
 }
 
-fn build_public_key_from_b64(b64: &str) -> Result<PublicKey, AuthError> {
+pub fn build_public_key_from_b64(b64: &str) -> Result<PublicKey, AuthError> {
     let bytes = decode_b64_standard(b64)?;
 
     if !bytes.is_empty() && bytes[0] == 0x30 {
@@ -64,7 +64,7 @@ fn build_public_key_from_b64(b64: &str) -> Result<PublicKey, AuthError> {
     }
 }
 
-fn jose_sig_to_der(jose_sig: &[u8]) -> Result<Vec<u8>, AuthError> {
+pub fn jose_sig_to_der(jose_sig: &[u8]) -> Result<Vec<u8>, AuthError> {
     if jose_sig.len() % 2 != 0 {
         return Err(AuthError::InvalidSignature);
     }
@@ -109,7 +109,7 @@ fn jose_sig_to_der(jose_sig: &[u8]) -> Result<Vec<u8>, AuthError> {
     Ok(der)
 }
 
-fn decode_header_get_x5u(header_b64: &str) -> Result<String, AuthError> {
+pub fn decode_header_get_x5u(header_b64: &str) -> Result<String, AuthError> {
     let header_bytes = decode_b64_url_nopad(header_b64)?;
     let header_json: Value = serde_json::from_slice(&header_bytes)?;
     if let Some(x5u) = header_json.get("x5u") {
