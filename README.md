@@ -64,8 +64,3 @@ cargo run
 ```
 
 Then, paste the three JWT tokens, each on a new line, followed by the Mojang public key on a new line.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
-''
